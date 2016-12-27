@@ -1,0 +1,6 @@
+framework module CCChartView {
+  umbrella header "CCChartView-umbrella.h"
+
+  export *
+  module * { export * }
+}
