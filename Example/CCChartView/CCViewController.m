@@ -7,6 +7,7 @@
 //
 
 #import "CCViewController.h"
+#import "CCLineChart.h"
 
 @interface CCViewController ()
 
@@ -18,6 +19,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    CCLineChart *lineChart = [[CCLineChart alloc] init];
+    
 }
 
 @end
