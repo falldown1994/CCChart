@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CCLineChartData.h"
 
 @interface CCLineChart : UIView
+
+@property (nonatomic, strong) CCLineChartData *lineChartData;
 
 @end

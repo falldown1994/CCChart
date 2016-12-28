@@ -8,6 +8,7 @@
 
 #import "CCViewController.h"
 #import "CCLineChart.h"
+#import "CCCustomView.h"
 
 @interface CCViewController ()
 
@@ -18,9 +19,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-    CCLineChart *lineChart = [[CCLineChart alloc] init];
     
+    CCLineChartData *data = [[CCLineChartData alloc] init];
+    
+    [data setItemsValue:@[
+                          @"4.23", @"3.22", @"1.74",
+                          @"2.86", @"1.99", @"2.43",
+                          @"6.34"
+                          ]];
+    
+    [self.lineChartView setLineChartData:data];
 }
 
 @end

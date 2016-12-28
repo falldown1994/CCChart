@@ -2,4 +2,5 @@ use_frameworks!
 
 target 'CCChartView_Example' do
   pod 'CCChartView', :path => '../'
+  pod 'AFNetworking', '~> 3.1.0'
 end

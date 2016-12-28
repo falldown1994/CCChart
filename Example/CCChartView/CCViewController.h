@@ -7,7 +7,11 @@
 //
 
 @import UIKit;
+@class CCCustomView;
 
 @interface CCViewController : UIViewController
+
+// 折线图
+@property (weak, nonatomic) IBOutlet CCCustomView *lineChartView;
 
 @end
