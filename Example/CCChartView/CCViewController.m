@@ -27,6 +27,8 @@
                           @"2.86", @"1.99", @"2.43",
                           @"6.34"
                           ]];
+    [data setItemsXAxis:@[@"2016/10/20", @"2016/10/25", @"2016/11/02"]];
+    [data setItemsYAxis:@[@"1.54", @"1.77", @"1.98", @"2.79", @"7.99"]];
     
     [self.lineChartView setLineChartData:data];
 }
