@@ -57,10 +57,11 @@
     CGFloat segmentLengthX = w / segmentCount;
     
     for (NSInteger idx = 0; idx < (segmentCount - 1); idx++) {
+        // Y轴上的网格线
         CGFloat yPoint = (idx + 1) * segmentLengthY + y;
         CGPoint minXPoint = CGPointMake(minX, yPoint);
         CGPoint maxXPoint = CGPointMake(maxX, yPoint);
-        
+        // X轴上的网格线
         CGFloat xPoint = (idx + 1) * segmentLengthX + x;
         CGPoint minYPoint = CGPointMake(xPoint, minY);
         CGPoint maxYpoint = CGPointMake(xPoint, maxY);
@@ -74,11 +75,11 @@
     
     CGContextStrokePath(ctx);
     
-    CGContextRestoreGState(ctx);
-    CGContextSaveGState(ctx);
-    
-    CGContextSetLineWidth(ctx, 1.0);
-    [[UIColor cyanColor] set];
+//    CGContextRestoreGState(ctx);
+//    CGContextSaveGState(ctx);
+//    
+//    CGContextSetLineWidth(ctx, 1.0);
+//    [[UIColor redColor] set];
     
     NSArray *itemsValue = _lineChartData.itemsValue;
     __block CGFloat minValueY = [itemsValue[0] floatValue];
@@ -98,12 +99,10 @@
         }
     }];
     // 最大值和最小值上下浮动0.1
-    minValueY -= 0.1;
-    maxValueY += 0.1;
-    
-    
-    
-    // 计算Y坐标轴最大刻度值和最小刻度值
+    minValueY /= 1.2;
+    maxValueY *= 1.2;
+
+    // 计算Y坐标轴刻度值
     NSMutableArray *valueYAxis = [NSMutableArray array];
     CGFloat offset = (maxValueY - minValueY) / 4.0;
     for (NSInteger idx = 0; idx < 3; idx++) {
@@ -113,16 +112,54 @@
     [valueYAxis insertObject:@(minValueY) atIndex:0];
     [valueYAxis addObject:@(maxValueY)];
     
+    CGFloat drawX = x + 3.0;
+    
+    [valueYAxis enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString *drawString = [NSString stringWithFormat:@"%.2lf", [obj floatValue]];
+        
+        CGRect rect = [drawString boundingRectWithSize:CGSizeMake(w, segmentLengthY) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12.0]} context:nil];
+        
+        CGFloat drawH = rect.size.height;
+        CGFloat drawW = rect.size.width;
+        CGFloat drawY = y + (4.0 - idx) * segmentLengthY;
+        CGFloat offset = 0.0;
+        if (0 == idx) {
+            offset -= (drawH + 2.0);
+        } else if (valueYAxis.count - 1 == idx) {
+            offset += 2.0;
+        } else {
+            offset -= drawH * 0.5;
+        }
+        
+        drawY += offset;
+        
+        [drawString drawInRect:CGRectMake(drawX, drawY, drawW, drawH) withAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12.0], NSForegroundColorAttributeName:[UIColor redColor]}];
+    }];
+    
+
+    CGContextRestoreGState(ctx);
+    CGContextSaveGState(ctx);
+    
+    CGContextSetLineWidth(ctx, 1.0);
+    [[UIColor darkGrayColor] set];
     // 确定每一个值对应的坐标
     NSMutableArray *points = [NSMutableArray array];
+    
+    CGFloat valueLengthX = w / (itemsValue.count - 1);
     [itemsValue enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         CGFloat itemValue = [(NSString *)obj floatValue];
         CGFloat ratioY = (itemValue - minValueY) / (maxValueY - minValueY);
         // 计算Y坐标点
-        CGFloat y = h * (1 - ratioY) + x;
-        CGFloat x = (idx + 1) * segmentLengthX + x;
-    
-        [points addObject:[NSValue valueWithCGPoint:CGPointMake(x, y)]];
+        CGFloat valueY = h * (1 - ratioY) + x;
+        CGFloat valueX = idx * valueLengthX + x;
+        if (0 == idx) {
+            valueX += 1.0;
+        } else if (itemsValue.count - 1 == idx) {
+            valueX -= 1.0;
+        }
+        
+        NSLog(@"y: %lf, x: %lf", y, x);
+        [points addObject:[NSValue valueWithCGPoint:CGPointMake(valueX, valueY)]];
     }];
     
     [points enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -148,9 +185,6 @@
         
         // 配置绘图参数
         if (_lineChartData.itemsValue.count > 0) {
-//            // 偏移量
-//            _inset = 30.0;
-            
             [self setNeedsDisplay];
         }
     }
