@@ -12,7 +12,7 @@
 
 @property (nonatomic, strong) NSArray<NSString *> *itemsValue;
 
-@property (nonatomic, strong) NSArray<NSString *> *itemsXAxis;
-@property (nonatomic, strong) NSArray<NSString *> *itemsYAxis;
+//@property (nonatomic, strong) NSArray<NSString *> *itemsXAxis;
+//@property (nonatomic, strong) NSArray<NSString *> *itemsYAxis;
 
 @end

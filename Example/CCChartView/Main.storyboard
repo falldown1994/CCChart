@@ -23,18 +23,34 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y2a-DV-jhD" customClass="CCCustomView">
-                                <rect key="frame" x="2" y="195" width="371" height="278"/>
+                                <rect key="frame" x="8" y="199" width="359" height="269"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="Y2a-DV-jhD" secondAttribute="height" multiplier="4:3" id="rPk-KX-gqd"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2016/12/23" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Tr-Of-Lrr">
+                                <rect key="frame" x="8" y="476" width="65" height="15"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2016/12/30" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9d3-jl-oca">
+                                <rect key="frame" x="302" y="476" width="65" height="15"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="Y2a-DV-jhD" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" constant="2" id="6gl-rg-sGy"/>
+                            <constraint firstItem="Y2a-DV-jhD" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leading" constant="8" id="6gl-rg-sGy"/>
                             <constraint firstItem="Y2a-DV-jhD" firstAttribute="centerY" secondItem="TpU-gO-2f1" secondAttribute="centerY" id="DuC-Es-X4p"/>
-                            <constraint firstAttribute="trailing" secondItem="Y2a-DV-jhD" secondAttribute="trailing" constant="2" id="PjC-eq-Qm3"/>
+                            <constraint firstItem="9d3-jl-oca" firstAttribute="trailing" secondItem="Y2a-DV-jhD" secondAttribute="trailing" id="G9W-S4-66i"/>
+                            <constraint firstAttribute="trailing" secondItem="Y2a-DV-jhD" secondAttribute="trailing" constant="8" id="PjC-eq-Qm3"/>
+                            <constraint firstItem="3Tr-Of-Lrr" firstAttribute="top" secondItem="Y2a-DV-jhD" secondAttribute="bottom" constant="8" id="a48-Dz-1ut"/>
+                            <constraint firstItem="9d3-jl-oca" firstAttribute="top" secondItem="3Tr-Of-Lrr" secondAttribute="top" id="ah6-9P-3bB"/>
+                            <constraint firstItem="3Tr-Of-Lrr" firstAttribute="leading" secondItem="Y2a-DV-jhD" secondAttribute="leading" id="xAR-mc-zkQ"/>
                         </constraints>
                     </view>
                     <connections>

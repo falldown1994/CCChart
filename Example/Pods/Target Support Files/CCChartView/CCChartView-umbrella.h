@@ -1,5 +1,7 @@
 #import <UIKit/UIKit.h>
 
+#import "CCChartView.h"
+#import "CCGridLine.h"
 #import "CCLineChart.h"
 #import "CCLineChartData.h"
 

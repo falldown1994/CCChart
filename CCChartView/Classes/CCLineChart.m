@@ -7,36 +7,102 @@
 //
 
 #import "CCLineChart.h"
+#import "CCGridLine.h"
 
 @interface CCLineChart () {
-//    CGFloat _inset; // 偏移量
+    // 水平方向网格线
+    NSMutableArray *_gridLinesHorizontal;
+    // 垂直方向网格线
+    NSMutableArray *_gridLinesVertical;
 }
 
 @end
 
 @implementation CCLineChart
 
-#pragma mark - 绘图
+#pragma mark -
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        [self initConfiguration];
+    }
+    return self;
+}
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    
+    [self initConfiguration];
+}
+
+- (void)initConfiguration {
+    // vector
+    _gridLinesHorizontal = [NSMutableArray array];
+    _gridLinesVertical = [NSMutableArray array];
+    
+    // grid line
+    CGRect bounds = self.bounds;
+    
+    CGFloat w = bounds.size.width;
+    CGFloat h = bounds.size.height;
+    
+    CGFloat minX = bounds.origin.x;
+    CGFloat maxX = minX + w;
+    
+    CGFloat minY = bounds.origin.y;
+    CGFloat maxY = minY + h;
+    
+    NSInteger segmentCount = 4;
+    CGFloat segmentLengthY = h / segmentCount;
+    CGFloat segmentLengthX = w / segmentCount;
+    
+//    for (NSInteger idx = 0; idx < (segmentCount - 1); idx++) {
+//        // Y轴上的网格线
+//        CGFloat yPoint = (idx + 1) * segmentLengthY + y;
+//        CGPoint minXPoint = CGPointMake(minX, yPoint);
+//        CGPoint maxXPoint = CGPointMake(maxX, yPoint);
+//        // X轴上的网格线
+//        CGFloat xPoint = (idx + 1) * segmentLengthX + x;
+//        CGPoint minYPoint = CGPointMake(xPoint, minY);
+//        CGPoint maxYpoint = CGPointMake(xPoint, maxY);
+    
+//        CGContextMoveToPoint(ctx, minXPoint.x, minXPoint.y);
+//        CGContextAddLineToPoint(ctx, maxXPoint.x, maxXPoint.y);
+//        
+//        CGContextMoveToPoint(ctx, minYPoint.x, minYPoint.y);
+//        CGContextAddLineToPoint(ctx, maxYpoint.x, maxYpoint.y);
+//    }
+}
+
+
+#pragma mark -
 
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
     
     CGContextRef ctx = UIGraphicsGetCurrentContext();
-    
     CGContextSaveGState(ctx);
     
-    CGContextSetLineWidth(ctx, 1.0);
-    [[UIColor blackColor] set];
+    // 绘制边框
+    cc_drawBorderRect(ctx, self.bounds, [UIColor blackColor], 1.0);
     
-    // 绘制矩形
-    CGFloat x = 8.0;
-    CGFloat y = x;
-    CGFloat w = rect.size.width - x * 2.0;
-    CGFloat h = rect.size.height - y * 2.0;
     
-    CGContextAddRect(ctx, CGRectMake(x, y, w, h));
-    CGContextStrokePath(ctx);
+//    CGContextSetLineWidth(ctx, 1.0);
+//    [[UIColor blackColor] set];
+//
+//    CGFloat x = 0.0;
+//    CGFloat y = x;
+//    CGFloat w = rect.size.width - x * 2.0;
+//    CGFloat h = rect.size.height - y * 2.0;
+//    
+//    CGContextAddRect(ctx, CGRectMake(x, y, w, h));
+//    CGContextStrokePath(ctx);
     
+    
+    
+    
+    
+    // 绘制 水平方向/垂直方向 网格线
     CGContextRestoreGState(ctx);
     CGContextSaveGState(ctx);
     
@@ -44,10 +110,14 @@
     [[UIColor colorWithRed:238.0/255.0 green:238.0/255.0 blue:238.0/255.0 alpha:1.0] set];
     
     // Y轴的虚线
-    NSMutableArray *linesYAxis = [NSMutableArray array];
+//    NSMutableArray *linesYAxis = [NSMutableArray array];
     // X轴的虚线
-    NSMutableArray *linesXAxis = [NSMutableArray array];
+//    NSMutableArray *linesXAxis = [NSMutableArray array];
     
+    CGFloat x = 0.0;
+    CGFloat y = x;
+    CGFloat w = rect.size.width - x * 2.0;
+    CGFloat h = rect.size.height - y * 2.0;
     CGFloat minX = x;
     CGFloat maxX = x + w;
     CGFloat minY = y;
@@ -75,11 +145,8 @@
     
     CGContextStrokePath(ctx);
     
-//    CGContextRestoreGState(ctx);
-//    CGContextSaveGState(ctx);
-//    
-//    CGContextSetLineWidth(ctx, 1.0);
-//    [[UIColor redColor] set];
+    
+    
     
     NSArray *itemsValue = _lineChartData.itemsValue;
     __block CGFloat minValueY = [itemsValue[0] floatValue];
@@ -177,17 +244,82 @@
 }
 
 
-#pragma mark - 公共
+#pragma mark - 
 
 - (void)setLineChartData:(CCLineChartData *)lineChartData {
     if (lineChartData) {
         _lineChartData = lineChartData;
+        
+        
         
         // 配置绘图参数
         if (_lineChartData.itemsValue.count > 0) {
             [self setNeedsDisplay];
         }
     }
+}
+
+
+#pragma mark -
+
+void cc_drawGridLine(CGContextRef           context,
+                     NSArray<CCGridLine *>  *lines,
+                     UIColor                *color,
+                     CGFloat                lineWidth)
+{
+    CGContextRestoreGState(context);
+    CGContextSaveGState(context);
+    
+    CGContextSetLineWidth(context, lineWidth);
+    [color set];
+    
+//    CGFloat x = 0.0;
+//    CGFloat y = x;
+//    CGFloat w = rect.size.width - x * 2.0;
+//    CGFloat h = rect.size.height - y * 2.0;
+//    CGFloat minX = x;
+//    CGFloat maxX = x + w;
+//    CGFloat minY = y;
+//    CGFloat maxY = y + h;
+//    NSInteger segmentCount = 4;
+//    CGFloat segmentLengthY = h / segmentCount;
+//    CGFloat segmentLengthX = w / segmentCount;
+//    
+//    for (NSInteger idx = 0; idx < (segmentCount - 1); idx++) {
+//        // Y轴上的网格线
+//        CGFloat yPoint = (idx + 1) * segmentLengthY + y;
+//        CGPoint minXPoint = CGPointMake(minX, yPoint);
+//        CGPoint maxXPoint = CGPointMake(maxX, yPoint);
+//        // X轴上的网格线
+//        CGFloat xPoint = (idx + 1) * segmentLengthX + x;
+//        CGPoint minYPoint = CGPointMake(xPoint, minY);
+//        CGPoint maxYpoint = CGPointMake(xPoint, maxY);
+//        
+//        CGContextMoveToPoint(ctx, minXPoint.x, minXPoint.y);
+//        CGContextAddLineToPoint(ctx, maxXPoint.x, maxXPoint.y);
+//        
+//        CGContextMoveToPoint(ctx, minYPoint.x, minYPoint.y);
+//        CGContextAddLineToPoint(ctx, maxYpoint.x, maxYpoint.y);
+//    }
+    
+    CGContextStrokePath(context);
+}
+
+
+
+void cc_drawBorderRect(CGContextRef    context,
+                       CGRect          drawRect,
+                       UIColor         *color,
+                       CGFloat         lineWidth)
+{
+    CGContextRestoreGState(context);
+    CGContextSaveGState(context);
+
+    CGContextSetLineWidth(context, lineWidth);
+    [color set];
+    
+    CGContextAddRect(context, drawRect);
+    CGContextStrokePath(context);
 }
 
 @end
