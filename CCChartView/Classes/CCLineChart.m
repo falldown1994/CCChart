@@ -140,12 +140,11 @@
 
 #pragma mark ------------------------------
 
-void cc_drawTextForAxisY(CGContextRef           context,
-                         NSArray<NSString *>    *
-                         itemsForDrawText,
-                         NSArray<NSValue *>     *
-                         itemsForDrawRect,
-                         NSDictionary           *attributes)
+void cc_drawTextForAxisY(CGContextRef context, NSArray<
+    NSString *> *itemsForDrawText,
+                         NSArray<NSValue *> *
+                            itemsForDrawRect, NSDictionary *
+                                attributes)
 {
     CGContextRestoreGState(context);
     CGContextSaveGState(context);
@@ -156,13 +155,11 @@ void cc_drawTextForAxisY(CGContextRef           context,
     }];
 }
 
-void cc_drawGridLine(CGContextRef               context,
-                     NSArray<CCGridLineData *>  *
-                     gridLinesHorizontal,
-                     NSArray<CCGridLineData *>  *
-                     gridLinesVertical,
-                     UIColor                    *color,
-                     CGFloat                    lineWidth)
+void cc_drawGridLine(CGContextRef context, NSArray<
+    CCGridLineData *> *gridLinesHorizontal,
+                     NSArray<CCGridLineData *> *
+                        gridLinesVertical, UIColor *color,
+                            CGFloat lineWidth)
 {
     CGContextRestoreGState(context);
     CGContextSaveGState(context);
@@ -187,10 +184,9 @@ void cc_drawGridLine(CGContextRef               context,
 
 
 
-void cc_drawBorderRect(CGContextRef    context,
-                       CGRect          drawRect,
-                       UIColor         *color,
-                       CGFloat         lineWidth)
+void cc_drawBorderRect(CGContextRef context,
+                       CGRect drawRect,
+                       UIColor *color, CGFloat lineWidth)
 {
     CGContextRestoreGState(context);
     CGContextSaveGState(context);
