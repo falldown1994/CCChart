@@ -84,12 +84,12 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "$BUILT_PRODUCTS_DIR/AFNetworking/AFNetworking.framework"
   install_framework "$BUILT_PRODUCTS_DIR/CCChartView/CCChartView.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/PNChart/PNChart.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/UICountingLabel/UICountingLabel.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/MJExtension/MJExtension.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "$BUILT_PRODUCTS_DIR/AFNetworking/AFNetworking.framework"
   install_framework "$BUILT_PRODUCTS_DIR/CCChartView/CCChartView.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/PNChart/PNChart.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/UICountingLabel/UICountingLabel.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/MJExtension/MJExtension.framework"
 fi

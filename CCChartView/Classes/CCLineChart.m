@@ -7,112 +7,43 @@
 //
 
 #import "CCLineChart.h"
-#import "CCGridLine.h"
+#import "CCGridLineData.h"
 
 @interface CCLineChart () {
     // 水平方向网格线
     NSMutableArray *_gridLinesHorizontal;
     // 垂直方向网格线
     NSMutableArray *_gridLinesVertical;
+    // 行数/列数
+    NSUInteger _rowCount;
+    // 垂直方向文本值
+    NSMutableArray *_itemsValueForAxisY;
+    // 垂直方向文本值绘制区域
+    NSMutableArray *_itemsDrawRectForAxisY;
+    // Y轴数值文本的最大值/最小值
+    CGFloat _minValueForAxisY;
+    CGFloat _maxValueForAxisY;
 }
 
 @end
 
 @implementation CCLineChart
 
-#pragma mark -
-
-- (instancetype)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
-        [self initConfiguration];
-    }
-    return self;
-}
-
-- (void)awakeFromNib {
-    [super awakeFromNib];
-    
-    [self initConfiguration];
-}
-
-- (void)initConfiguration {
-    // vector
-    _gridLinesHorizontal = [NSMutableArray array];
-    _gridLinesVertical = [NSMutableArray array];
-    
-    // grid line
-    CGRect bounds = self.bounds;
-    
-    CGFloat w = bounds.size.width;
-    CGFloat h = bounds.size.height;
-    
-    CGFloat minX = bounds.origin.x;
-    CGFloat maxX = minX + w;
-    
-    CGFloat minY = bounds.origin.y;
-    CGFloat maxY = minY + h;
-    
-    NSInteger segmentCount = 4;
-    CGFloat segmentLengthY = h / segmentCount;
-    CGFloat segmentLengthX = w / segmentCount;
-    
-//    for (NSInteger idx = 0; idx < (segmentCount - 1); idx++) {
-//        // Y轴上的网格线
-//        CGFloat yPoint = (idx + 1) * segmentLengthY + y;
-//        CGPoint minXPoint = CGPointMake(minX, yPoint);
-//        CGPoint maxXPoint = CGPointMake(maxX, yPoint);
-//        // X轴上的网格线
-//        CGFloat xPoint = (idx + 1) * segmentLengthX + x;
-//        CGPoint minYPoint = CGPointMake(xPoint, minY);
-//        CGPoint maxYpoint = CGPointMake(xPoint, maxY);
-    
-//        CGContextMoveToPoint(ctx, minXPoint.x, minXPoint.y);
-//        CGContextAddLineToPoint(ctx, maxXPoint.x, maxXPoint.y);
-//        
-//        CGContextMoveToPoint(ctx, minYPoint.x, minYPoint.y);
-//        CGContextAddLineToPoint(ctx, maxYpoint.x, maxYpoint.y);
-//    }
-}
-
-
-#pragma mark -
+#pragma mark ------------------------------
 
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
+    
+    [self setNeedsConfiguration];
     
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     CGContextSaveGState(ctx);
     
     // 绘制边框
     cc_drawBorderRect(ctx, self.bounds, [UIColor blackColor], 1.0);
+    // 绘制网格线
+    cc_drawGridLine(ctx, _gridLinesHorizontal, _gridLinesVertical, [UIColor colorWithRed:238.0/255.0 green:238.0/255.0 blue:238.0/255.0 alpha:1.0], 1.0);
     
-    
-//    CGContextSetLineWidth(ctx, 1.0);
-//    [[UIColor blackColor] set];
-//
-//    CGFloat x = 0.0;
-//    CGFloat y = x;
-//    CGFloat w = rect.size.width - x * 2.0;
-//    CGFloat h = rect.size.height - y * 2.0;
-//    
-//    CGContextAddRect(ctx, CGRectMake(x, y, w, h));
-//    CGContextStrokePath(ctx);
-    
-    
-    
-    
-    
-    // 绘制 水平方向/垂直方向 网格线
-    CGContextRestoreGState(ctx);
-    CGContextSaveGState(ctx);
-    
-    CGContextSetLineWidth(ctx, 1.0);
-    [[UIColor colorWithRed:238.0/255.0 green:238.0/255.0 blue:238.0/255.0 alpha:1.0] set];
-    
-    // Y轴的虚线
-//    NSMutableArray *linesYAxis = [NSMutableArray array];
-    // X轴的虚线
-//    NSMutableArray *linesXAxis = [NSMutableArray array];
     
     CGFloat x = 0.0;
     CGFloat y = x;
@@ -125,28 +56,6 @@
     NSInteger segmentCount = 4;
     CGFloat segmentLengthY = h / segmentCount;
     CGFloat segmentLengthX = w / segmentCount;
-    
-    for (NSInteger idx = 0; idx < (segmentCount - 1); idx++) {
-        // Y轴上的网格线
-        CGFloat yPoint = (idx + 1) * segmentLengthY + y;
-        CGPoint minXPoint = CGPointMake(minX, yPoint);
-        CGPoint maxXPoint = CGPointMake(maxX, yPoint);
-        // X轴上的网格线
-        CGFloat xPoint = (idx + 1) * segmentLengthX + x;
-        CGPoint minYPoint = CGPointMake(xPoint, minY);
-        CGPoint maxYpoint = CGPointMake(xPoint, maxY);
-        
-        CGContextMoveToPoint(ctx, minXPoint.x, minXPoint.y);
-        CGContextAddLineToPoint(ctx, maxXPoint.x, maxXPoint.y);
-        
-        CGContextMoveToPoint(ctx, minYPoint.x, minYPoint.y);
-        CGContextAddLineToPoint(ctx, maxYpoint.x, maxYpoint.y);
-    }
-    
-    CGContextStrokePath(ctx);
-    
-    
-    
     
     NSArray *itemsValue = _lineChartData.itemsValue;
     __block CGFloat minValueY = [itemsValue[0] floatValue];
@@ -168,42 +77,13 @@
     // 最大值和最小值上下浮动0.1
     minValueY /= 1.2;
     maxValueY *= 1.2;
-
-    // 计算Y坐标轴刻度值
-    NSMutableArray *valueYAxis = [NSMutableArray array];
-    CGFloat offset = (maxValueY - minValueY) / 4.0;
-    for (NSInteger idx = 0; idx < 3; idx++) {
-        CGFloat value = minValueY + (idx + 1) * offset;
-        [valueYAxis addObject:@(value)];
-    }
-    [valueYAxis insertObject:@(minValueY) atIndex:0];
-    [valueYAxis addObject:@(maxValueY)];
     
-    CGFloat drawX = x + 3.0;
+    // 绘制Y轴文本值
+    cc_drawTextForAxisY(ctx, _itemsValueForAxisY, _itemsDrawRectForAxisY, @{NSFontAttributeName:[UIFont systemFontOfSize:12.0], NSForegroundColorAttributeName:[UIColor redColor]});
     
-    [valueYAxis enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSString *drawString = [NSString stringWithFormat:@"%.2lf", [obj floatValue]];
-        
-        CGRect rect = [drawString boundingRectWithSize:CGSizeMake(w, segmentLengthY) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12.0]} context:nil];
-        
-        CGFloat drawH = rect.size.height;
-        CGFloat drawW = rect.size.width;
-        CGFloat drawY = y + (4.0 - idx) * segmentLengthY;
-        CGFloat offset = 0.0;
-        if (0 == idx) {
-            offset -= (drawH + 2.0);
-        } else if (valueYAxis.count - 1 == idx) {
-            offset += 2.0;
-        } else {
-            offset -= drawH * 0.5;
-        }
-        
-        drawY += offset;
-        
-        [drawString drawInRect:CGRectMake(drawX, drawY, drawW, drawH) withAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12.0], NSForegroundColorAttributeName:[UIColor redColor]}];
-    }];
     
-
+    
+    
     CGContextRestoreGState(ctx);
     CGContextSaveGState(ctx);
     
@@ -244,13 +124,11 @@
 }
 
 
-#pragma mark - 
+#pragma mark ------------------------------
 
 - (void)setLineChartData:(CCLineChartData *)lineChartData {
     if (lineChartData) {
         _lineChartData = lineChartData;
-        
-        
         
         // 配置绘图参数
         if (_lineChartData.itemsValue.count > 0) {
@@ -260,12 +138,31 @@
 }
 
 
-#pragma mark -
+#pragma mark ------------------------------
 
-void cc_drawGridLine(CGContextRef           context,
-                     NSArray<CCGridLine *>  *lines,
-                     UIColor                *color,
-                     CGFloat                lineWidth)
+void cc_drawTextForAxisY(CGContextRef           context,
+                         NSArray<NSString *>    *
+                         itemsForDrawText,
+                         NSArray<NSValue *>     *
+                         itemsForDrawRect,
+                         NSDictionary           *attributes)
+{
+    CGContextRestoreGState(context);
+    CGContextSaveGState(context);
+    
+    [itemsForDrawText enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        CGRect drawRect = [itemsForDrawRect[idx] CGRectValue];
+        [obj drawInRect:drawRect withAttributes:attributes];
+    }];
+}
+
+void cc_drawGridLine(CGContextRef               context,
+                     NSArray<CCGridLineData *>  *
+                     gridLinesHorizontal,
+                     NSArray<CCGridLineData *>  *
+                     gridLinesVertical,
+                     UIColor                    *color,
+                     CGFloat                    lineWidth)
 {
     CGContextRestoreGState(context);
     CGContextSaveGState(context);
@@ -273,34 +170,17 @@ void cc_drawGridLine(CGContextRef           context,
     CGContextSetLineWidth(context, lineWidth);
     [color set];
     
-//    CGFloat x = 0.0;
-//    CGFloat y = x;
-//    CGFloat w = rect.size.width - x * 2.0;
-//    CGFloat h = rect.size.height - y * 2.0;
-//    CGFloat minX = x;
-//    CGFloat maxX = x + w;
-//    CGFloat minY = y;
-//    CGFloat maxY = y + h;
-//    NSInteger segmentCount = 4;
-//    CGFloat segmentLengthY = h / segmentCount;
-//    CGFloat segmentLengthX = w / segmentCount;
-//    
-//    for (NSInteger idx = 0; idx < (segmentCount - 1); idx++) {
-//        // Y轴上的网格线
-//        CGFloat yPoint = (idx + 1) * segmentLengthY + y;
-//        CGPoint minXPoint = CGPointMake(minX, yPoint);
-//        CGPoint maxXPoint = CGPointMake(maxX, yPoint);
-//        // X轴上的网格线
-//        CGFloat xPoint = (idx + 1) * segmentLengthX + x;
-//        CGPoint minYPoint = CGPointMake(xPoint, minY);
-//        CGPoint maxYpoint = CGPointMake(xPoint, maxY);
-//        
-//        CGContextMoveToPoint(ctx, minXPoint.x, minXPoint.y);
-//        CGContextAddLineToPoint(ctx, maxXPoint.x, maxXPoint.y);
-//        
-//        CGContextMoveToPoint(ctx, minYPoint.x, minYPoint.y);
-//        CGContextAddLineToPoint(ctx, maxYpoint.x, maxYpoint.y);
-//    }
+    // horizontal
+    [gridLinesHorizontal enumerateObjectsUsingBlock:^(CCGridLineData * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        CGContextMoveToPoint(context, obj.startPoint.x, obj.startPoint.y);
+        CGContextAddLineToPoint(context, obj.endPoint.x, obj.endPoint.y);
+    }];
+    
+    // vertical
+    [gridLinesVertical enumerateObjectsUsingBlock:^(CCGridLineData * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        CGContextMoveToPoint(context, obj.startPoint.x, obj.startPoint.y);
+        CGContextAddLineToPoint(context, obj.endPoint.x, obj.endPoint.y);
+    }];
     
     CGContextStrokePath(context);
 }
@@ -320,6 +200,134 @@ void cc_drawBorderRect(CGContextRef    context,
     
     CGContextAddRect(context, drawRect);
     CGContextStrokePath(context);
+}
+
+
+#pragma mark ------------------------------
+
+- (void)setNeedsConfiguration {
+    
+    if (!_gridLinesHorizontal) {
+        _gridLinesHorizontal = [NSMutableArray array];
+    } else {
+        [_gridLinesHorizontal removeAllObjects];
+    }
+    
+    if (!_gridLinesVertical) {
+        _gridLinesVertical = [NSMutableArray array];
+    } else {
+        [_gridLinesVertical removeAllObjects];
+    }
+    
+    _rowCount = 5;
+    
+    // grid line
+    CGRect bounds = self.bounds;
+    
+    CGFloat w = bounds.size.width;
+    CGFloat h = bounds.size.height;
+    
+    CGFloat minX = bounds.origin.x;
+    CGFloat maxX = minX + w;
+    
+    CGFloat minY = bounds.origin.y;
+    CGFloat maxY = minY + h;
+    
+    NSInteger segmentCount = _rowCount - 1;
+    CGFloat segmentLengthY = h / segmentCount;
+    CGFloat segmentLengthX = w / segmentCount;
+    
+    for (NSInteger idx = 0; idx < (segmentCount - 1); idx++) {
+        // horizontal
+        CGFloat yHorGridLine = (idx + 1) * segmentLengthY;
+        
+        CCGridLineData *horGridLineData = [[CCGridLineData alloc] init];
+        horGridLineData.startPoint = CGPointMake(minX, yHorGridLine);
+        horGridLineData.endPoint = CGPointMake(maxX, yHorGridLine);
+        
+        // vertical
+        CGFloat xVerGridLine = (idx + 1) * segmentLengthX;
+        
+        CCGridLineData *verGridLineData = [[CCGridLineData alloc] init];
+        verGridLineData.startPoint = CGPointMake(xVerGridLine, minY);
+        verGridLineData.endPoint = CGPointMake(xVerGridLine, maxY);
+        
+        [_gridLinesHorizontal addObject:horGridLineData];
+        [_gridLinesVertical addObject:verGridLineData];
+    }
+    
+    // -----------
+    NSArray<NSString *> *itemsValue = _lineChartData.itemsValue;
+    // min value axis y
+    __block CGFloat minValueForAxisY = [itemsValue[0] floatValue];
+    // max value axis y
+    __block CGFloat maxValueForAxisY = [itemsValue[0] floatValue];
+    
+    [itemsValue enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (idx > 0) {
+            CGFloat valueForAxisY = [obj floatValue];
+            
+            if (valueForAxisY < minValueForAxisY) {
+                minValueForAxisY = valueForAxisY;
+            }
+            
+            if (valueForAxisY > maxValueForAxisY) {
+                maxValueForAxisY = valueForAxisY;
+            }
+        }
+    }];
+    
+    minValueForAxisY /= 1.2;
+    maxValueForAxisY *= 1.2;
+    
+    _minValueForAxisY = minValueForAxisY;
+    _maxValueForAxisY = maxValueForAxisY;
+    
+    // value items
+    if (!_itemsValueForAxisY) {
+        _itemsValueForAxisY = [NSMutableArray array];
+    } else {
+        [_itemsValueForAxisY removeAllObjects];
+    }
+    
+    CGFloat valueForSegment = (maxValueForAxisY - minValueForAxisY) / segmentCount;
+    for (NSInteger idx = 0; idx < (segmentCount - 1); idx++) {
+        CGFloat itemValue = minValueForAxisY + (idx + 1) * valueForSegment;
+        [_itemsValueForAxisY addObject:[NSString stringWithFormat:@"%.2lf", itemValue]];
+    }
+    [_itemsValueForAxisY insertObject:[NSString stringWithFormat:@"%.2lf", minValueForAxisY] atIndex:0];
+    [_itemsValueForAxisY addObject:[NSString stringWithFormat:@"%.2lf", maxValueForAxisY]];
+    
+    // draw rect
+    if (!_itemsDrawRectForAxisY) {
+        _itemsDrawRectForAxisY = [NSMutableArray array];
+    } else {
+        [_itemsDrawRectForAxisY removeAllObjects];
+    }
+    
+    [_itemsValueForAxisY enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString *drawString = (NSString *)obj;
+        
+        CGRect rect = [drawString boundingRectWithSize:CGSizeMake(w, segmentLengthY) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12.0]} context:nil];
+        
+        CGFloat drawX = 3.0;
+        CGFloat drawH = rect.size.height;
+        CGFloat drawW = rect.size.width;
+        CGFloat drawY = (segmentCount - idx) * segmentLengthY;
+        CGFloat offset = 0.0;
+        
+        if (0 == idx) {
+            offset -= (drawH + 2.0);
+        } else if (_itemsValueForAxisY.count - 1 == idx) {
+            offset += 2.0;
+        } else {
+            offset -= drawH * 0.5;
+        }
+        
+        drawY += offset;
+        
+        [_itemsDrawRectForAxisY addObject:[NSValue valueWithCGRect:CGRectMake(drawX, drawY, drawW, drawH)]];
+    }];
 }
 
 @end

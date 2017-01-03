@@ -9,10 +9,6 @@
 #ifndef __CCChartView_H__
 #define __CCChartView_H__
 
+#import "CCLineChart.h"
 
-#endif
-
-
-#ifdef __OBJC__
-    #import "CCLineChart.h"
 #endif
