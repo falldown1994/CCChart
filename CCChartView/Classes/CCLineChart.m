@@ -8,7 +8,10 @@
 
 #import "CCLineChart.h"
 #import "CCGridLineData.h"
+#import "CCColorDef.h"
 
+
+#pragma mark -
 
 static void cc_drawLine(CGContextRef context,
                         NSArray<
@@ -96,7 +99,7 @@ static void cc_drawBorderRect(CGContextRef context,
 }
 
 
-
+#pragma mark -
 
 @interface CCLineChart () {
     // 水平方向网格线
@@ -120,7 +123,7 @@ static void cc_drawBorderRect(CGContextRef context,
 
 @implementation CCLineChart
 
-#pragma mark ------------------------------
+#pragma mark -
 
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
@@ -131,22 +134,21 @@ static void cc_drawBorderRect(CGContextRef context,
     CGContextSaveGState(ctx);
     
     // 绘制边框
-    cc_drawBorderRect(ctx, self.bounds, [UIColor blackColor], 1.0);
+    cc_drawBorderRect(ctx, self.bounds, CC_COLOR_BLACK, 1.0);
     // 绘制网格线
-    cc_drawGridLine(ctx, _gridLinesHorizontal, _gridLinesVertical, [UIColor colorWithRed:238.0/255.0 green:238.0/255.0 blue:238.0/255.0 alpha:1.0], 1.0);
+    cc_drawGridLine(ctx, _gridLinesHorizontal, _gridLinesVertical, CC_COLOR_LIGHT_GRAY, 1.0);
     // 绘制Y轴文本值
-    cc_drawTextForAxisY(ctx, _itemsValueForAxisY, _itemsDrawRectForAxisY, @{NSFontAttributeName:[UIFont systemFontOfSize:12.0], NSForegroundColorAttributeName:[UIColor redColor]});
+    cc_drawTextForAxisY(ctx, _itemsValueForAxisY, _itemsDrawRectForAxisY, @{NSFontAttributeName:[UIFont systemFontOfSize:12.0], NSForegroundColorAttributeName:CC_COLOR_MISTY_ROSE});
     // 绘制曲线
-    cc_drawLine(ctx, _itemsDrawPointForLine, [UIColor darkGrayColor], 1.0);
+    cc_drawLine(ctx, _itemsDrawPointForLine, CC_COLOR_DARK_GRAY, 1.0);
 }
 
 
-#pragma mark ------------------------------
+#pragma mark -
 
 - (void)setLineChartData:(CCLineChartData *)lineChartData {
     if (lineChartData) {
         _lineChartData = lineChartData;
-        
         // 配置绘图参数
         if (_lineChartData.itemsValue.count > 0) {
             [self setNeedsDisplay];
@@ -155,20 +157,7 @@ static void cc_drawBorderRect(CGContextRef context,
 }
 
 
-#pragma mark ------------------------------hahhahhahahha
-
-
-
-
-
-
-
-
-
-
-
-
-#pragma mark ------------------------------
+#pragma mark -
 
 - (void)setNeedsConfiguration {
     

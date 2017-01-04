@@ -31,6 +31,7 @@
 		4ECA9BE68D373E094EFA019CC4EA1720 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F28310C109F80A2823B80B134627E5D8 /* CoreGraphics.framework */; };
 		4FE3D0FC60D1370E831CBFF9680FA8EB /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B0A15003DCEEBA4FDF7ABE901F172CE /* MobileCoreServices.framework */; };
 		560698A4D707DCBCC1C8F98BC9B89B23 /* AFURLSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96958C1428D038E867E733C3ED7A7E75 /* AFURLSessionManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		56EC0B3A1E1CE929008E3417 /* CCColorDef.h in Headers */ = {isa = PBXBuildFile; fileRef = 56EC0B391E1CE91A008E3417 /* CCColorDef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		577BEE9E06FE5EC16DDCE8AD88B09979 /* NSObject+MJKeyValue.h in Headers */ = {isa = PBXBuildFile; fileRef = FB0E583E42620D08869F93CA549F6A19 /* NSObject+MJKeyValue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5808B477EFF509D810B5CDCFDC944F80 /* AFImageDownloader.h in Headers */ = {isa = PBXBuildFile; fileRef = AC79E0D2624878A5B912839C5C44D413 /* AFImageDownloader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FF6453E55785669885F626B853FD2AA /* UIProgressView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 29CEA1BBDF69C1EE0EBE5845E607A836 /* UIProgressView+AFNetworking.m */; };
@@ -145,6 +146,7 @@
 		531FA2F48375BA8578E11252420687C1 /* MJProperty.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MJProperty.h; path = MJExtension/MJProperty.h; sourceTree = "<group>"; };
 		55E291B85FA0C6E76EDECB4E4438099A /* Pods-CCChartView_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-CCChartView_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
 		56E23EA1B6BBFC8F8B3E678D50802157 /* UIWebView+AFNetworking.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIWebView+AFNetworking.h"; path = "UIKit+AFNetworking/UIWebView+AFNetworking.h"; sourceTree = "<group>"; };
+		56EC0B391E1CE91A008E3417 /* CCColorDef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCColorDef.h; sourceTree = "<group>"; };
 		5D1D43EE0F009CAE5BD7EC3F5A27949A /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImageView+AFNetworking.m"; path = "UIKit+AFNetworking/UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
 		5DFEB29C3C19CAEFA6F9989EA3A796DB /* MJFoundation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MJFoundation.h; path = MJExtension/MJFoundation.h; sourceTree = "<group>"; };
 		67ACE52AD6E74CAE561620C2D80C7CF2 /* MJExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MJExtension.h; path = MJExtension/MJExtension.h; sourceTree = "<group>"; };
@@ -487,6 +489,7 @@
 			isa = PBXGroup;
 			children = (
 				88C77121EA93A01B635B18883E0B7C5A /* CCChartView.h */,
+				56EC0B391E1CE91A008E3417 /* CCColorDef.h */,
 				2A73FAE16AF0E53C1663665B42586AC4 /* CCGridLineData.h */,
 				9F018D875BFF4ED61196D1402D75B3AA /* CCGridLineData.m */,
 				0E05667051A50BA85663D5E139C64B39 /* CCLineChart.h */,
@@ -576,6 +579,7 @@
 			files = (
 				05C563955580A4BA10A0C6AC994EA556 /* CCChartView-umbrella.h in Headers */,
 				B04B9929E13A6C6E45B9F0256E670C02 /* CCChartView.h in Headers */,
+				56EC0B3A1E1CE929008E3417 /* CCColorDef.h in Headers */,
 				CD61D2E4FCD0155EE7681EE7248B7465 /* CCGridLineData.h in Headers */,
 				87FEF385DAEEA0FD23FB3342A35A89C4 /* CCLineChart.h in Headers */,
 				704F73C1609C929520D1D7E3BD2C7177 /* CCLineChartData.h in Headers */,
