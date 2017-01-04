@@ -20,6 +20,8 @@
     NSMutableArray *_itemsValueForAxisY;
     // 垂直方向文本值绘制区域
     NSMutableArray *_itemsDrawRectForAxisY;
+    //
+    NSMutableArray *_itemsDrawPointForLine;
     // Y轴数值文本的最大值/最小值
     CGFloat _minValueForAxisY;
     CGFloat _maxValueForAxisY;
@@ -43,84 +45,10 @@
     cc_drawBorderRect(ctx, self.bounds, [UIColor blackColor], 1.0);
     // 绘制网格线
     cc_drawGridLine(ctx, _gridLinesHorizontal, _gridLinesVertical, [UIColor colorWithRed:238.0/255.0 green:238.0/255.0 blue:238.0/255.0 alpha:1.0], 1.0);
-    
-    
-    CGFloat x = 0.0;
-    CGFloat y = x;
-    CGFloat w = rect.size.width - x * 2.0;
-    CGFloat h = rect.size.height - y * 2.0;
-    CGFloat minX = x;
-    CGFloat maxX = x + w;
-    CGFloat minY = y;
-    CGFloat maxY = y + h;
-    NSInteger segmentCount = 4;
-    CGFloat segmentLengthY = h / segmentCount;
-    CGFloat segmentLengthX = w / segmentCount;
-    
-    NSArray *itemsValue = _lineChartData.itemsValue;
-    __block CGFloat minValueY = [itemsValue[0] floatValue];
-    __block CGFloat maxValueY = [itemsValue[0] floatValue];
-    
-    [itemsValue enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (idx > 0) {
-            CGFloat valueY = [itemsValue[idx] floatValue];
-            
-            if (valueY < minValueY) {
-                minValueY = valueY;
-            }
-            
-            if (valueY > maxValueY) {
-                maxValueY = valueY;
-            }
-        }
-    }];
-    // 最大值和最小值上下浮动0.1
-    minValueY /= 1.2;
-    maxValueY *= 1.2;
-    
     // 绘制Y轴文本值
     cc_drawTextForAxisY(ctx, _itemsValueForAxisY, _itemsDrawRectForAxisY, @{NSFontAttributeName:[UIFont systemFontOfSize:12.0], NSForegroundColorAttributeName:[UIColor redColor]});
-    
-    
-    
-    
-    CGContextRestoreGState(ctx);
-    CGContextSaveGState(ctx);
-    
-    CGContextSetLineWidth(ctx, 1.0);
-    [[UIColor darkGrayColor] set];
-    // 确定每一个值对应的坐标
-    NSMutableArray *points = [NSMutableArray array];
-    
-    CGFloat valueLengthX = w / (itemsValue.count - 1);
-    [itemsValue enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        CGFloat itemValue = [(NSString *)obj floatValue];
-        CGFloat ratioY = (itemValue - minValueY) / (maxValueY - minValueY);
-        // 计算Y坐标点
-        CGFloat valueY = h * (1 - ratioY) + x;
-        CGFloat valueX = idx * valueLengthX + x;
-        if (0 == idx) {
-            valueX += 1.0;
-        } else if (itemsValue.count - 1 == idx) {
-            valueX -= 1.0;
-        }
-        
-        NSLog(@"y: %lf, x: %lf", y, x);
-        [points addObject:[NSValue valueWithCGPoint:CGPointMake(valueX, valueY)]];
-    }];
-    
-    [points enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSValue *pointValue = (NSValue *)obj;
-        CGPoint point = [pointValue CGPointValue];
-        
-        if (0 == idx) {
-            CGContextMoveToPoint(ctx, point.x, point.y);
-        } else {
-            CGContextAddLineToPoint(ctx, point.x, point.y);
-        }
-    }];
-    
-    CGContextStrokePath(ctx);
+    // 绘制曲线
+    cc_drawLine(ctx, _itemsDrawPointForLine, [UIColor darkGrayColor], 1.0);
 }
 
 
@@ -139,6 +67,29 @@
 
 
 #pragma mark ------------------------------
+
+void cc_drawLine(CGContextRef context, NSArray<NSValue *> *
+    itemsDrawPointForLine, UIColor *color,
+                    CGFloat lineWidth)
+{
+    CGContextRestoreGState(context);
+    CGContextSaveGState(context);
+    
+    CGContextSetLineWidth(context, lineWidth);
+    [color set];
+    
+    [itemsDrawPointForLine enumerateObjectsUsingBlock:^(NSValue * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        CGPoint point = [obj CGPointValue];
+        
+        if (0 == idx) {
+            CGContextMoveToPoint(context, point.x, point.y);
+        } else {
+            CGContextAddLineToPoint(context, point.x, point.y);
+        }
+    }];
+    
+    CGContextStrokePath(context);
+}
 
 void cc_drawTextForAxisY(CGContextRef context, NSArray<
     NSString *> *itemsForDrawText,
@@ -323,6 +274,29 @@ void cc_drawBorderRect(CGContextRef context,
         drawY += offset;
         
         [_itemsDrawRectForAxisY addObject:[NSValue valueWithCGRect:CGRectMake(drawX, drawY, drawW, drawH)]];
+    }];
+    
+    // draw line
+    if (!_itemsDrawPointForLine) {
+        _itemsDrawPointForLine = [NSMutableArray array];
+    } else {
+        [_itemsDrawPointForLine removeAllObjects];
+    }
+    
+    // 确定每一个值对应的坐标
+    CGFloat valueLengthX = w / (itemsValue.count - 1);
+    [itemsValue enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        CGFloat itemValue = [(NSString *)obj floatValue];
+        CGFloat ratioY = (itemValue - minValueForAxisY) / (maxValueForAxisY - minValueForAxisY);
+        // 计算Y坐标点
+        CGFloat valueY = h * (1 - ratioY);
+        CGFloat valueX = idx * valueLengthX;
+        if (0 == idx) {
+            valueX += 1.0;
+        } else if (itemsValue.count - 1 == idx) {
+            valueX -= 1.0;
+        }
+        [_itemsDrawPointForLine addObject:[NSValue valueWithCGPoint:CGPointMake(valueX, valueY)]];
     }];
 }
 
