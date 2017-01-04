@@ -10,13 +10,11 @@
 #define __CCColorDef_H__
 
 #define CC_RGBA_COLOR(r,g,b,a) \
-            [UIColor colorWithRed:((r)*1.0)/255.0 \
-                            green:((g)*1.0)/255.0 \
-                             blue:((b)*1.0)/255.0 \
-                            alpha:a]
+        [UIColor colorWithRed:((r)*1.0)/255.0 green:((g)*1.0)/255.0 \
+            blue:((b)*1.0)/255.0 alpha:a]
 
 #define CC_RGB_COLOR(r,g,b) \
-            CC_RGBA_COLOR(r,g,b,1.0)
+        CC_RGBA_COLOR(r,g,b,1.0)
 
 
 
