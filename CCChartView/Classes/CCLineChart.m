@@ -9,6 +9,95 @@
 #import "CCLineChart.h"
 #import "CCGridLineData.h"
 
+
+static void cc_drawLine(CGContextRef context,
+                        NSArray<
+    NSValue *> *itemsDrawPointForLine, UIColor *
+                        color,
+                        CGFloat lineWidth)
+{
+    CGContextRestoreGState(context);
+    CGContextSaveGState(context);
+    
+    CGContextSetLineWidth(context, lineWidth);
+    [color set];
+    
+    [itemsDrawPointForLine enumerateObjectsUsingBlock:^(NSValue * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        CGPoint drawPoint = [obj CGPointValue];
+        
+        if (0 == idx) {
+            CGContextMoveToPoint(context, drawPoint.x, drawPoint.y);
+        } else {
+            CGContextAddLineToPoint(context, drawPoint.x, drawPoint.y);
+        }
+    }];
+    
+    CGContextStrokePath(context);
+}
+
+static void cc_drawTextForAxisY(CGContextRef context,
+                                NSArray<
+    NSString *> *itemsForDrawText,
+                                NSArray<
+    NSValue *> *itemsForDrawRect,
+                                NSDictionary *attributes)
+{
+    CGContextRestoreGState(context);
+    CGContextSaveGState(context);
+    
+    [itemsForDrawText enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        CGRect drawRect = [itemsForDrawRect[idx] CGRectValue];
+        [obj drawInRect:drawRect withAttributes:attributes];
+    }];
+}
+
+static void cc_drawGridLine(CGContextRef context,
+                            NSArray<
+    CCGridLineData *> *gridLinesHorizontal,
+                            NSArray<
+    CCGridLineData *> *gridLinesVertical, UIColor *
+                            color,
+                            CGFloat lineWidth)
+{
+    CGContextRestoreGState(context);
+    CGContextSaveGState(context);
+    
+    CGContextSetLineWidth(context, lineWidth);
+    [color set];
+    
+    // horizontal
+    [gridLinesHorizontal enumerateObjectsUsingBlock:^(CCGridLineData * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        CGContextMoveToPoint(context, obj.startPoint.x, obj.startPoint.y);
+        CGContextAddLineToPoint(context, obj.endPoint.x, obj.endPoint.y);
+    }];
+    
+    // vertical
+    [gridLinesVertical enumerateObjectsUsingBlock:^(CCGridLineData * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        CGContextMoveToPoint(context, obj.startPoint.x, obj.startPoint.y);
+        CGContextAddLineToPoint(context, obj.endPoint.x, obj.endPoint.y);
+    }];
+    
+    CGContextStrokePath(context);
+}
+
+static void cc_drawBorderRect(CGContextRef context,
+                              CGRect drawRect, UIColor *
+                              color,
+                              CGFloat lineWidth)
+{
+    CGContextRestoreGState(context);
+    CGContextSaveGState(context);
+    
+    CGContextSetLineWidth(context, lineWidth);
+    [color set];
+    
+    CGContextAddRect(context, drawRect);
+    CGContextStrokePath(context);
+}
+
+
+
+
 @interface CCLineChart () {
     // 水平方向网格线
     NSMutableArray *_gridLinesHorizontal;
@@ -66,88 +155,17 @@
 }
 
 
-#pragma mark ------------------------------
-
-void cc_drawLine(CGContextRef context, NSArray<NSValue *> *
-    itemsDrawPointForLine, UIColor *color,
-                    CGFloat lineWidth)
-{
-    CGContextRestoreGState(context);
-    CGContextSaveGState(context);
-    
-    CGContextSetLineWidth(context, lineWidth);
-    [color set];
-    
-    [itemsDrawPointForLine enumerateObjectsUsingBlock:^(NSValue * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        CGPoint point = [obj CGPointValue];
-        
-        if (0 == idx) {
-            CGContextMoveToPoint(context, point.x, point.y);
-        } else {
-            CGContextAddLineToPoint(context, point.x, point.y);
-        }
-    }];
-    
-    CGContextStrokePath(context);
-}
-
-void cc_drawTextForAxisY(CGContextRef context, NSArray<
-    NSString *> *itemsForDrawText,
-                         NSArray<NSValue *> *
-                            itemsForDrawRect, NSDictionary *
-                                attributes)
-{
-    CGContextRestoreGState(context);
-    CGContextSaveGState(context);
-    
-    [itemsForDrawText enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        CGRect drawRect = [itemsForDrawRect[idx] CGRectValue];
-        [obj drawInRect:drawRect withAttributes:attributes];
-    }];
-}
-
-void cc_drawGridLine(CGContextRef context, NSArray<
-    CCGridLineData *> *gridLinesHorizontal,
-                     NSArray<CCGridLineData *> *
-                        gridLinesVertical, UIColor *color,
-                            CGFloat lineWidth)
-{
-    CGContextRestoreGState(context);
-    CGContextSaveGState(context);
-    
-    CGContextSetLineWidth(context, lineWidth);
-    [color set];
-    
-    // horizontal
-    [gridLinesHorizontal enumerateObjectsUsingBlock:^(CCGridLineData * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        CGContextMoveToPoint(context, obj.startPoint.x, obj.startPoint.y);
-        CGContextAddLineToPoint(context, obj.endPoint.x, obj.endPoint.y);
-    }];
-    
-    // vertical
-    [gridLinesVertical enumerateObjectsUsingBlock:^(CCGridLineData * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        CGContextMoveToPoint(context, obj.startPoint.x, obj.startPoint.y);
-        CGContextAddLineToPoint(context, obj.endPoint.x, obj.endPoint.y);
-    }];
-    
-    CGContextStrokePath(context);
-}
+#pragma mark ------------------------------hahhahhahahha
 
 
 
-void cc_drawBorderRect(CGContextRef context,
-                       CGRect drawRect,
-                       UIColor *color, CGFloat lineWidth)
-{
-    CGContextRestoreGState(context);
-    CGContextSaveGState(context);
 
-    CGContextSetLineWidth(context, lineWidth);
-    [color set];
-    
-    CGContextAddRect(context, drawRect);
-    CGContextStrokePath(context);
-}
+
+
+
+
+
+
 
 
 #pragma mark ------------------------------
